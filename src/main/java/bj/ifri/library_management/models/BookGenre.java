@@ -1,0 +1,29 @@
+package bj.ifri.library_management.models;
+
+public enum BookGenre {
+
+    FICTION,
+    NON_FICTION,
+    SCIENCE_FICTION,
+    FANTASTIQUE,
+    POLICIER,
+    THRILLER,
+    HORREUR,
+    ROMANCE,
+    HISTORIQUE,
+    BIOGRAPHIE,
+    DEVELOPPEMENT_PERSONNEL,
+    POESIE,
+    PHILOSOPHIE,
+    RELIGION,
+    SCIENCES,
+    ECONOMIE,
+    EDUCATION,
+    TECHNOLOGIE,
+    VOYAGE,
+    CUISINE,
+    ART,
+    JEUNESSE,
+    ADOLESCENT,
+    BANDE_DESSINEE
+}

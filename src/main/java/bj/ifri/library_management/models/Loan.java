@@ -1,77 +1,118 @@
 package bj.ifri.library_management.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.Date;
 
 @Entity
+@Table(name = "loans")
 public class Loan {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
-	private String firstname;
+    @ManyToOne()
+    @JoinColumn(name = "related_book_id")
+    private Book relatedBook;
 
-	private String lastname;
+    @ManyToOne()
+    @JoinColumn(name = "related_user_id")
+    private User relatedUser;
 
-	private String matricule;
+    private Date loanDate;
 
-	/**
-	 * @return the id
-	 */
-	public Integer getId() {
-		return id;
-	}
+    private Date expectedReturnDate;
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Enumerated(value = EnumType.STRING)
+    private LoanStatus status;
 
-	/**
-	 * @return the firstname
-	 */
-	public String getFirstname() {
-		return firstname;
-	}
+    /**
+     * @return the id
+     */
+    public Integer getId() {
+        return id;
+    }
 
-	/**
-	 * @param firstname the firstname to set
-	 */
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return the lastname
-	 */
-	public String getLastname() {
-		return lastname;
-	}
 
-	/**
-	 * @param lastname the lastname to set
-	 */
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
+    /**
+     * @return the relatedBook
+     */
+    public Book getRelatedBook() {
+        return relatedBook;
+    }
 
-	/**
-	 * @return the matricule
-	 */
-	public String getMatricule() {
-		return matricule;
-	}
+    /**
+     * @param relatedBook the book to set
+     */
+    public void setRelatedBook(Book relatedBook) {
+        this.relatedBook = relatedBook;
+    }
 
-	/**
-	 * @param matricule the matricule to set
-	 */
-	public void setMatricule(String matricule) {
-		this.matricule = matricule;
-	}
+
+    /**
+     * @return the relatedUser
+     */
+    public User getRelatedUser() {
+        return relatedUser;
+    }
+
+    /**
+     * @param relatedUser the book to set
+     */
+    public void setRelatedUser(User relatedUser) {
+        this.relatedUser = relatedUser;
+    }
+
+
+    /**
+     * @return the loanDate
+     */
+    public Date getLoanDate() {
+        return loanDate;
+    }
+
+    /**
+     * @param loanDate the loanDate to set
+     */
+    public void setLoanDate(Date loanDate) {
+        this.loanDate = loanDate;
+    }
+
+
+    /**
+     * @return the expectedReturnDate
+     */
+    public Date getExpectedReturnDate() {
+        return expectedReturnDate;
+    }
+
+    /**
+     * @param expectedReturnDate the expectedReturnDate to set
+     */
+    public void setExpectedReturnDate(Date expectedReturnDate) {
+        this.expectedReturnDate = expectedReturnDate;
+    }
+
+    /**
+     * @return the status
+     */
+    public LoanStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(LoanStatus status) {
+        this.status = status;
+    }
 
 }

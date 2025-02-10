@@ -1,13 +1,11 @@
 package bj.ifri.library_management.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
+@Table(name = "books")
 public class Book {
 
     @Id
@@ -20,8 +18,12 @@ public class Book {
 
     private Date publishedAt;
 
-    // Todo: Author will be an user
-    private String author;
+    @Enumerated(value = EnumType.STRING)
+    private BookAvailability isAvailable;
+
+    @ManyToOne()
+    @JoinColumn(name = "author_id")
+    private User author;
 
     /**
      * @return the id
@@ -79,6 +81,32 @@ public class Book {
         this.publishedAt = publishedAt;
     }
 
+    /**
+     * @return the isAvailable
+     */
+    public BookAvailability getIsAvailable() {
+        return isAvailable;
+    }
 
-    // Todo: Create author setter and getters
+    /**
+     * @param isAvailable the status to set
+     */
+    public void setIsAvailable(BookAvailability isAvailable) {
+        this.isAvailable = isAvailable;
+    }
+
+    /**
+     * @return the author
+     */
+    public User getAuthor() {
+        return author;
+    }
+
+    /**
+     * @param author the book to set
+     */
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
 }
