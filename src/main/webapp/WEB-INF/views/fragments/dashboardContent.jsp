@@ -22,7 +22,7 @@
                     <div class="weather-info">
                         <div class="d-flex">
                             <div>
-                                <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>31<sup>C</sup>
+                                <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>${ formattedTime }
                                 </h2>
                             </div>
                             <div class="ms-2">

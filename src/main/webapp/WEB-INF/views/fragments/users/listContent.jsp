@@ -60,7 +60,7 @@
                                                     </a>
                                                     <a type="button"
                                                        href="/users/${user.id}/delete"
-                                                       class="d-flex justify-content-center align-items-center btn btn-inverse-danger btn-icon">
+                                                       class="d-flex justify-content-center align-items-center btn btn-inverse-danger btn-icon ml-2">
                                                         <i class="ti-trash"></i>
                                                     </a>
                                                 </div>

@@ -5,25 +5,25 @@
 <nav class="sidebar sidebar-offcanvas" id="sidebar">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" href="/">
-                <i class="icon-grid menu-icon"></i>
+            <a class="nav-link" href="/" id="sidebar-home-menu">
+                <i class="ti ti-pulse menu-icon"></i>
                 <span class="menu-title">Dashboard</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/users">
-                <i class="mdi mdi-account menu-icon"></i>
+            <a class="nav-link" href="/users" id="sidebar-users-menu">
+                <i class="ti ti-user menu-icon"></i>
                 <span class="menu-title">Utilisateurs</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/books">
+            <a class="nav-link" href="/books" id="sidebar-books-menu">
                 <i class="ti ti-book menu-icon"></i>
                 <span class="menu-title">Livres</span>
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="/loans">
+            <a class="nav-link" href="/loans" id="sidebar-loans-menu">
                 <i class="ti ti-bookmark-alt menu-icon"></i>
                 <span class="menu-title">Prêts</span>
             </a>

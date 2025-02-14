@@ -12,6 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 @Controller
 @RequestMapping(path = "")
 public class DashboardController {
@@ -27,7 +31,7 @@ public class DashboardController {
 
     // Dashboard
     @GetMapping({"/", "/dashboard"})
-    public String dashboard(Model model) {
+    public String dashboard(Model model, Locale locale) {
         model.addAttribute("totalUsers", this.userService.count());
         model.addAttribute("totalBooks", this.bookService.count());
         model.addAttribute("totalLoans", this.loanService.count());
@@ -37,6 +41,11 @@ public class DashboardController {
         Page<Book> paginatedBooksList = this.bookService.findPaginated(1, 10, "id", Sort.Direction.DESC.name());
 
         model.addAttribute("lastBooks", paginatedBooksList.getContent());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", locale);
+        String formattedTime = dateFormat.format(new Date());
+
+        model.addAttribute("formattedTime", formattedTime);
 
         return "dashboard";
     }

@@ -41,7 +41,7 @@
                                 <div class="row mt-5">
 
                                     <c:forEach items="${books}" var="book">
-                                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-3 p-sm-2">
+                                        <div class="col-12 col-sm-6 col-md-4 col-lg-3 p-3">
                                             <div class="book-card">
                                                 <div class="book-card-hover-color-bubble"></div>
                                                 <div class="row d-flex align-items-center justify-content-between">
