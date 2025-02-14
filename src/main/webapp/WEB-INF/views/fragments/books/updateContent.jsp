@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center  mb-4">
-                        <h4 class="card-title pt-2 pb-2 pl-5 text-">Ajout d' un nouveau livre.</h4>
+                        <h4 class="card-title pt-2 pb-2 pl-5 text-">Mettre à jour le livre: "${ book.title }".</h4>
                     </div>
                     <div class="row justify-content-md-center">
                         <div class="col-12 col-md-8">
