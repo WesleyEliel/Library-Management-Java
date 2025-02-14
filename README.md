@@ -12,8 +12,6 @@ livres, les emprunts et les utilisateurs d'une bibliothèque.
 
 ---
 
----
-
 ## Enseignant
 
 - **Jean-Pierre KOUKPAKI**
