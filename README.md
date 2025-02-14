@@ -110,5 +110,5 @@ Par ailleurs nous nous somme familiarisé avec le système de templatage jsp
 
 ---
 
-## 🌟 **Projet réalisé dans le cadre du cours de ** _Outils Java_**.**
+## 🌟 **Projet réalisé dans le cadre du cours de ** _Outils Java_**, Master 1, 2024-2025, IFRI BJ.**
 
