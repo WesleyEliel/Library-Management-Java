@@ -2,7 +2,7 @@ package bj.ifri.library_management.models;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "loans")
@@ -20,12 +20,12 @@ public class Loan {
     @JoinColumn(name = "related_user_id")
     private User relatedUser;
 
-    private Date loanDate;
+    private LocalDate loanDate;
 
-    private Date expectedReturnDate;
+    private LocalDate expectedReturnDate;
 
     @Enumerated(value = EnumType.STRING)
-    private LoanStatus status;
+    private LoanStatus status = LoanStatus.EN_COURS;
 
     /**
      * @return the id
@@ -75,14 +75,14 @@ public class Loan {
     /**
      * @return the loanDate
      */
-    public Date getLoanDate() {
+    public LocalDate getLoanDate() {
         return loanDate;
     }
 
     /**
      * @param loanDate the loanDate to set
      */
-    public void setLoanDate(Date loanDate) {
+    public void setLoanDate(LocalDate loanDate) {
         this.loanDate = loanDate;
     }
 
@@ -90,14 +90,14 @@ public class Loan {
     /**
      * @return the expectedReturnDate
      */
-    public Date getExpectedReturnDate() {
+    public LocalDate getExpectedReturnDate() {
         return expectedReturnDate;
     }
 
     /**
      * @param expectedReturnDate the expectedReturnDate to set
      */
-    public void setExpectedReturnDate(Date expectedReturnDate) {
+    public void setExpectedReturnDate(LocalDate expectedReturnDate) {
         this.expectedReturnDate = expectedReturnDate;
     }
 

@@ -1,45 +1,72 @@
 package bj.ifri.library_management.controllers;
 
-import java.util.List;
-
 import bj.ifri.library_management.models.Book;
-import bj.ifri.library_management.repositories.BookRepository;
+import bj.ifri.library_management.models.BookAvailability;
+import bj.ifri.library_management.services.BookService;
+import bj.ifri.library_management.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/books")
 public class BookController {
 
     @Autowired
-    private BookRepository bookRepository;
+    private BookService bookService;
+    @Autowired
+    private UserService userService;
 
-    @GetMapping(value = "/")
+    // Books
+    @GetMapping(value = "")
     public String listBooks(Model model) {
 
-        List<Book> booksBdd = bookRepository.findAll();
+        List<Book> booksBdd = this.bookService.getAllBooks();
 
         model.addAttribute("books", booksBdd);
 
-        return "books";
+        return "bookList";
     }
 
     @GetMapping(value = "/add")
-    public String addBook(Model model) {
+    public String showBookFormForRecord(Model model) {
         model.addAttribute("book", new Book());
-        return "addBook";
+        model.addAttribute("allUsers", this.userService.getAllUsers());
+        model.addAttribute("availabilityStatuses", BookAvailability.values());
+        return "bookAdd";
     }
 
     @PostMapping("/save")
     public String saveBook(@ModelAttribute("book") Book book) {
 
-        bookRepository.save(book);
+        this.bookService.saveBook(book);
 
+        return "redirect:/books";
+    }
+
+    @GetMapping("/{id}/update")
+    public String showBookFormForUpdate(@PathVariable(value = "id") Integer id, Model model) {
+
+        Book book = this.bookService.getBookById(id);
+        model.addAttribute("book", book);
+        model.addAttribute("allUsers", this.userService.getAllUsers());
+        model.addAttribute("availabilityStatuses", BookAvailability.values());
+        return "bookUpdate";
+    }
+
+    @PostMapping("/{id}/update-save")
+    public String updateBook(@PathVariable(value = "id") Integer id, @ModelAttribute("book") Book book) {
+        this.bookService.updateBook(id, book);
+        return "redirect:/books";
+    }
+
+    @GetMapping("/{id}/delete")
+    public String deleteBook(@PathVariable(value = "id") Integer id) {
+
+        this.bookService.deleteBookById(id);
         return "redirect:/books";
     }
 }

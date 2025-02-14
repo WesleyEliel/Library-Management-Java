@@ -2,7 +2,7 @@ package bj.ifri.library_management.models;
 
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "books")
@@ -16,13 +16,13 @@ public class Book {
 
     private String genre;
 
-    private Date publishedAt;
+    private LocalDate publishedAt;
 
     @Enumerated(value = EnumType.STRING)
     private BookAvailability isAvailable;
 
     @ManyToOne()
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
     /**
@@ -70,14 +70,14 @@ public class Book {
     /**
      * @return the publication date
      */
-    public Date getPublishedAt() {
+    public LocalDate getPublishedAt() {
         return publishedAt;
     }
 
     /**
      * @param publishedAt the published date to set
      */
-    public void setPublishedAt(Date publishedAt) {
+    public void setPublishedAt(LocalDate publishedAt) {
         this.publishedAt = publishedAt;
     }
 
