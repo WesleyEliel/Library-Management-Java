@@ -66,11 +66,11 @@ Avant de commencer, assurez-vous d'avoir :
 
 ### Livres
 #### Liste
-![Gestion des livres](docs/Livres_|_Ajout_ou_Modification_.png)
+![Gestion des livres](docs/Livres_|_Liste.png)
 
 #### Formulaire
 
-![Gestion des livres](docs/Livres_|_Liste.png)
+![Gestion des livres](docs/Livres_|_Ajout_ou_Modification.png)
 
 
 ### Utilisateurs
