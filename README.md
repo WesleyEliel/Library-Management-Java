@@ -101,6 +101,7 @@ Avant de commencer, assurez-vous d'avoir :
 - ✅ Mettre en place un système authentication avec des rôles et accès bien définis
 - ✅ Gérer la pagination (Nous avons essayé quelque chose, mais n'avons pas intégré le processus de pagination au font end )
 - ✅ Mettre en place une fonctionnalité de recherche pour apprendre une manipulation avancée des **`repositoties`**
+- ✅ Configurer docker et docker-compose pour faciliter l'exportation de l'application sur different os
 
 ---
 
