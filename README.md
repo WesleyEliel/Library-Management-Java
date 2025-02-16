@@ -58,6 +58,12 @@ Avant de commencer, assurez-vous d'avoir :
 6. Exécutez la classe principale : `LibraryManagementApplication.java` dont le chemin d'accès
    est `/src/main/java/bj/ifri/library_management/LibraryManagementApplication.java`
 
+Dans le cas ou vous aurez besoin d'une copie de la base de donnée de travail, veuillez retriuver un dump de celle ci  (
+postgresql) dans le repertoire dont le chemin d'accès est `/data/db.sql`
+
+La commande qui permet de charger la base de données (si vous avez l'utilitaire psql installé):
+`psql --username=<db_user_name> databasename < db.sql`
+
 ---
 
 ## 📸 Captures d'écran
@@ -112,7 +118,7 @@ Avant de commencer, assurez-vous d'avoir :
 
 - ✅ Mettre en place un système authentication avec des rôles et accès bien définis
 - ✅ Gérer la pagination (Nous avons essayé quelque chose, mais n'avons pas intégré le processus de pagination au font
-  end )
+  end)
 - ✅ Mettre en place une fonctionnalité de recherche pour apprendre une manipulation avancée des **`repositoties`**
 - ✅ Configurer docker et docker-compose pour faciliter l'exportation de l'application sur differents os
 
@@ -123,8 +129,8 @@ Avant de commencer, assurez-vous d'avoir :
 Ce projet nous a permis d'explorer de notre propre chef eco système des applications web avec java, d'apprendre à
 debugger les erreurs Java, et à manipuler les objects Java Par ailleurs nous nous somme familiarisé avec le système de
 templatage jsp. Nous avons puis appliquer d' autres concepts rencontrés dans d'autres frameworks à savoir héritage au
-niveau des templates pour minimiser la duplication du code et avoir une séparation claire, pour faciliter la lecture
-et le débogage.
+niveau des templates pour minimiser la duplication du code et avoir une séparation claire, pour faciliter la lecture et
+le débogage.
 
 ---
 
