@@ -1,0 +1,30 @@
+Vagrant.configure("2") do |config|
+
+#   config.vm.box = "generic/ubuntu2010"
+#
+#   config.vm.provider "libvirt" do |vb|
+
+  config.vm.box = "ubuntu/focal64"
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+
+  # Configuration du nœud master
+  config.vm.define "k8s-master" do |master|
+    master.vm.hostname = "k8s-master"
+    master.vm.network "private_network", ip: "192.168.56.100"
+  end
+
+  # Configuration des nœuds workers
+  (1..3).each do |i|
+    config.vm.define "k8s-worker#{i}" do |worker|
+      worker.vm.hostname = "k8s-worker#{i}"
+      worker.vm.network "private_network", ip: "192.168.56.10#{i}"
+    end
+  end
+
+  # Provisionnement initial
+  config.vm.provision "shell", path: "scripts/bootstrap.sh"
+end

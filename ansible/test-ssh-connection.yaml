@@ -1,0 +1,9 @@
+- name: Test SSH connectivity one host at a time
+  hosts: master,workers
+  serial: 1
+  gather_facts: no
+
+  tasks:
+    - name: Print current host being tested
+      debug:
+        msg: "Testing SSH connection on {{ inventory_hostname }}"

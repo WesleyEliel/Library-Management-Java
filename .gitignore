@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+vagrant/.vagrant
+vagrant/ubuntu-focal64-ready.box

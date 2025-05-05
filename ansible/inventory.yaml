@@ -1,0 +1,25 @@
+all:
+  vars:
+    ansible_python_interpreter: "/usr/bin/python3"
+
+  children:
+    master:
+      hosts:
+        k8s-master:
+          ansible_host: 192.168.56.100
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ../vagrant/.vagrant/machines/k8s-master/virtualbox/private_key
+    workers:
+      hosts:
+        k8s-worker1:
+          ansible_host: 192.168.56.101
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ../vagrant/.vagrant/machines/k8s-worker1/virtualbox/private_key
+        k8s-worker2:
+          ansible_host: 192.168.56.102
+          ansible_user: vagrant
+          ansible_ssh_private_key_file: ../vagrant/.vagrant/machines/k8s-worker2/virtualbox/private_key
+    k8s-cluster:
+      children:
+        master:
+        workers:

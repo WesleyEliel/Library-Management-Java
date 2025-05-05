@@ -1,0 +1,192 @@
+- name: Configure Kubernetes Cluster
+  hosts: k8s-cluster
+  become: yes
+  tasks:
+    - name: Update apt package index
+      apt:
+        update_cache: yes
+
+    - name: Install required packages
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg
+        state: present
+
+    - name: Create /etc/apt/keyrings if it doesn't exist
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: 0755
+
+    - name: Download Kubernetes GPG key
+      shell: |
+        curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+        chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+      args:
+        creates: /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+    - name: Add Kubernetes APT repository
+      copy:
+        dest: /etc/apt/sources.list.d/kubernetes.list
+        content: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /"
+        mode: 0644
+
+    - name: Update apt package index (again)
+      apt:
+        update_cache: yes
+
+    - name: Install Kubernetes packages
+      apt:
+        name: "{{ item }}"
+        state: present
+        update_cache: yes
+      loop:
+        - kubelet
+        - kubeadm
+        - kubectl
+        - kubernetes-cni
+
+    - name: Disable swap
+      command: swapoff -a
+      ignore_errors: yes
+
+    - name: Disable swap permanently in fstab
+      replace:
+        path: /etc/fstab
+        regexp: '^.*swap.*$'
+        replace: '#\0'
+
+    - name: Ensure br_netfilter module is loaded
+      modprobe:
+        name: br_netfilter
+        state: present
+
+    - name: Set sysctl params for Kubernetes networking
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+        reload: yes
+        ignoreerrors: yes
+      loop:
+        - { name: net.bridge.bridge-nf-call-ip6tables, value: 1 }
+        - { name: net.bridge.bridge-nf-call-iptables, value: 1 }
+        - { name: net.ipv4.ip_forward, value: 1 }
+
+    - name: Ensure containerd config directory exists
+      file:
+        path: /etc/containerd
+        state: directory
+
+    - name: Generate default containerd config
+      command: containerd config default > /etc/containerd/config.toml
+      args:
+        creates: /etc/containerd/config.toml
+
+    - name: Enable CRI v1 interface in containerd
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^disabled_plugins = \["cri"\]'
+        line: '#disabled_plugins = ["cri"]  # Commented out to enable CRI plugin'
+        backup: yes
+
+    - name: Set SystemdCgroup to true
+      lineinfile:
+        path: /etc/containerd/config.toml
+        regexp: '^SystemdCgroup = false'
+        line: 'SystemdCgroup = true'
+        backup: yes
+
+    - name: Restart containerd
+      systemd:
+        name: containerd
+        state: restarted
+        enabled: yes
+
+    - name: Set node IP for kubelet
+      ansible.builtin.lineinfile:
+        path: /etc/default/kubelet
+        regexp: '^KUBELET_EXTRA_ARGS='
+        line: "KUBELET_EXTRA_ARGS=--node-ip={{ hostvars[inventory_hostname]['ansible_host'] }}"
+        create: yes
+
+    - name: Restart kubelet
+      ansible.builtin.systemd:
+        name: kubelet
+        state: restarted
+        enabled: yes
+
+
+- name: Initialize Kubernetes master
+  hosts: master
+  become: yes
+  tasks:
+    - name: Initialize cluster
+      command: kubeadm init --apiserver-advertise-address=192.168.56.100 --pod-network-cidr=10.244.0.0/16
+      register: kubeadm_init
+
+    - name: Extract join command
+      set_fact:
+        join_command: "{{ kubeadm_init.stdout_lines | select('search', '^kubeadm join') | list | first }}"
+
+    - name: Save join command for worker nodes
+      add_host:
+        name: "k8s-worker-join"
+        groups: join_command_holder
+        join_cmd: "{{ join_command }}"
+
+    - name: Set up kubeconfig for vagrant user
+      command: "{{ item }}"
+      with_items:
+        - mkdir -p /home/vagrant/.kube
+        - cp -i /etc/kubernetes/admin.conf /home/vagrant/.kube/config
+        - chown vagrant:vagrant /home/vagrant/.kube/config
+        - chown vagrant:vagrant /home/vagrant/.kube/
+
+    - name: Install Flannel CNI
+      become_user: vagrant
+      command: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+
+    - name: Install NGINX Ingress
+      become_user: vagrant
+      command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.2/deploy/static/provider/cloud/deploy.yaml
+
+    - name: Install Metrics Server
+      become_user: vagrant
+      command: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+
+    - name: Patch Metrics Server for insecure TLS (for local testing)
+      become_user: vagrant
+      shell: |
+        kubectl patch deployment metrics-server -n kube-system \
+          --type='json' \
+          -p='[{"op":"add","path":"/spec/template/spec/containers/0/args/-","value":"--kubelet-insecure-tls"}]'
+      register: patch_metrics
+      failed_when: patch_metrics.rc != 0 and 'not patched' not in patch_metrics.stderr
+
+    - name: Allow logs/metrics to vagrant user
+      become_user: vagrant
+      shell: |
+        kubectl create clusterrolebinding vagrant-admin-binding \
+          --clusterrole=cluster-admin \
+          --user=vagrant
+      ignore_errors: yes
+
+
+- name: Join workers to cluster
+  hosts: workers
+  become: yes
+  vars:
+    join_cmd: "{{ hostvars['k8s-worker-join']['join_cmd'] }}"
+  tasks:
+    - name: Check if node is already joined
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: kubelet_config
+
+    - name: Join cluster using join command
+      command: "{{ join_cmd }} --discovery-token-unsafe-skip-ca-verification --ignore-preflight-errors=all"
+      when: not kubelet_config.stat.exists
