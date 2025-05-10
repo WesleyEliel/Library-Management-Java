@@ -1,0 +1,76 @@
+---
+- name: Déploiement de l'application via Kubernetes
+  hosts: k8s-master
+  become: yes
+  tasks:
+    - name: S'assurer que pip3 est installé
+      ansible.builtin.package:
+        name: python3-pip
+        state: present
+
+    - name: Installer le module Python kubernetes
+      ansible.builtin.pip:
+        name: kubernetes
+        executable: pip3
+
+    - name: Créer un dossier sur le master
+      file:
+        path: /home/vagrant/k8s-manifests
+        state: directory
+        owner: vagrant
+        group: vagrant
+        mode: '0755'
+      delegate_to: k8s-master
+
+    - name: Copier les fichiers YAML vers le master
+      copy:
+        src: "{{ item }}"
+        dest: /home/vagrant/k8s-manifests/
+        owner: vagrant
+        group: vagrant
+        mode: '0644'
+      loop:
+        - ../k8s/pv.yaml
+        - ../k8s/pvc.yaml
+        - ../k8s/deployment.yaml
+        - ../k8s/service.yaml
+        - ../k8s/ingress.yaml
+      delegate_to: k8s-master
+
+    - name: Supprimer l'ancien déploiement (si présent)
+      kubernetes.core.k8s:
+        state: absent
+        kind: Deployment
+        namespace: default
+        name: libraryapp-deployment
+        kubeconfig: /home/vagrant/.kube/config
+      ignore_errors: true
+
+    - name: Appliquer les fichiers YAML sur le master (avec KUBECONFIG)
+      shell: |
+        export KUBECONFIG=/home/vagrant/.kube/config && \
+        kubectl apply -f /home/vagrant/k8s-manifests/pv.yaml && \
+        kubectl apply -f /home/vagrant/k8s-manifests/pvc.yaml && \
+        kubectl apply -f /home/vagrant/k8s-manifests/deployment.yaml && \
+        kubectl apply -f /home/vagrant/k8s-manifests/service.yaml && \
+        kubectl apply -f /home/vagrant/k8s-manifests/ingress.yaml
+      args:
+        executable: /bin/bash
+      delegate_to: k8s-master
+
+    - name: Attendre 30 seconds que les pods sient mise à jour
+      pause:
+        seconds: 30
+
+    - name: Lister les pods et leurs nœuds
+      shell: |
+        export KUBECONFIG=/home/vagrant/.kube/config && \
+        kubectl get pods -o custom-columns=NAME:.metadata.name,NODE:.spec.nodeName --no-headers
+      args:
+        executable: /bin/bash
+      register: pods_list
+      delegate_to: k8s-master
+
+    - name: Afficher la liste des pods et nœuds
+      debug:
+        var: pods_list.stdout_lines

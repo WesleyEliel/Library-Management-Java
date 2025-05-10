@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: libraryapp-deployment
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: libraryapp
+  template:
+    metadata:
+      labels:
+        app: libraryapp
+    spec:
+      containers:
+        - name: libraryapp-container
+          image: 859655/libraryapp-image-java:latest
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: sqlite-storage
+              mountPath: /app/data/sqlite
+      volumes:
+        - name: sqlite-storage
+          persistentVolumeClaim:
+            claimName: libraryapp-sqlite-pvc
