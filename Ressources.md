@@ -20,3 +20,8 @@ Metrics Server
 
 Remembering:
 - Insecure flag in local for metric server and command in the container args section 
+
+
+https://www.baeldung.com/ops/kubernetes-ingress-empty-address
+
+https://www.loft.sh/blog/nginx-vs-traefik-vs-haproxy-comparing-kubernetes-ingress-controllers
