@@ -1,6 +1,7 @@
 ## Déploiement sous Kubernetes
 
-- kubectl apply -f k8s/
+- kubectl apply -f k8s/ ( en une fois )
+- Nous avon utilisé ansible, donc pas besoin.
 
 ---
 
@@ -11,7 +12,8 @@ Nous avons défini fichier par fichier ceux dont nous avon besoin pour deployer 
 - Un fichier de déploiement
 - Un fichier de services
 - Un fichier de demande d'utilisation d'espace sur le disque (pvc)
-- Et un fichier de configuration d'un volume persistant
+- Un fichier de configuration d'un volume persistant
+- Et un fichier de configuration ingress
 
 ---
 
